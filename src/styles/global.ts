@@ -3,13 +3,11 @@ import { createGlobalStyle } from 'styled-components';
 export const GlobalStyle = createGlobalStyle`
   :root {
     --white: #ffffff;
-    --gray-100: #f0f2f5;
-    --gray-500: #969cb3;
-    --red-500: #e52e4d;
-    --green-500: #33cc95;
-    --blue-400: #6933ff;
-    --blue-500: #5429cc;
-    --blue-900: #363f5f;
+    --background: #f0f2f5;
+    --placeholders: #cdcfd7;
+    --errors: #e52e4d;
+    --success: #27ae60;
+    --text: #363F5F;
   }
 
   * {
@@ -28,7 +26,7 @@ export const GlobalStyle = createGlobalStyle`
   }
 
   body {
-    background: var(--gray-100);
+    background: var(--background);
     -webkit-font-smoothing: antialiased;
   }
 
@@ -38,8 +36,9 @@ export const GlobalStyle = createGlobalStyle`
   }
 
   h1, h2, h3, h4, h5, h6, strong {
-    font-family: 'Roboto Slab', sans-serif;
+    font-family: 'Roboto', sans-serif;
     font-weight: 600;
+    color: var(--text);
   }
 
   button {
