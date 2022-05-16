@@ -30,18 +30,19 @@ export const Header = styled.header`
 
 export const ImageContainer = styled.div`
   display: flex;
+  flex: 1;
   flex-direction: column;
   justify-content: center;
   align-items: center;
 
-  margin: 0 36px 80px 36px;
+  margin: 16px;
   padding: 16px;
 
   border: 2px dashed var(--placeholders);
   border-radius: 10px;
 
   img {
-    width: 80%;
+    width: 90%;
   }
 
   h2 {
@@ -49,7 +50,11 @@ export const ImageContainer = styled.div`
   }
 `;
 
-export const CaptureButton = styled.button`
+export const InputImageFile = styled.input`
+  display: none;
+`;
+
+export const LabelImageFile = styled.label`
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -72,4 +77,8 @@ export const CaptureButton = styled.button`
   &:hover {
     filter: brightness(0.8);
   }
+`;
+
+export const CaptureContainer = styled.div`
+  margin-top: 32px;
 `;
