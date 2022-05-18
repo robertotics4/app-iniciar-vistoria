@@ -1,3 +1,4 @@
+import { useImages } from '../../hooks/images';
 import {
   Container,
   ActionButtons,
@@ -11,6 +12,8 @@ interface ImagePreviewProps {
 }
 
 function ImagePreview({ source, setSource }: ImagePreviewProps) {
+  const { pushImage } = useImages();
+
   return (
     <Container>
       <img src={source} alt="Preview" />
@@ -20,7 +23,9 @@ function ImagePreview({ source, setSource }: ImagePreviewProps) {
           Não
         </RepeatButton>
 
-        <ConfirmButton type="button">Sim</ConfirmButton>
+        <ConfirmButton onClick={() => pushImage(source)} type="button">
+          Sim
+        </ConfirmButton>
       </ActionButtons>
     </Container>
   );
