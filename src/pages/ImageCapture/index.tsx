@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { AiFillCamera } from 'react-icons/ai';
 import {
   Container,
@@ -11,11 +11,17 @@ import {
 } from './styles';
 
 import { ImagePreview } from '../ImagePreview';
+import { useImages } from '../../hooks/images';
 
-import frenteMedidor from '../../assets/frente-medidor.svg';
+interface ImageCaptureProps {
+  header: string;
+  imageSrc: string;
+  description: string;
+}
 
-function ImageCapture() {
+function ImageCapture({ header, description, imageSrc }: ImageCaptureProps) {
   const [source, setSource] = useState('');
+  const { sources } = useImages();
 
   const handleSetSource = useCallback((value: string) => {
     setSource(value);
@@ -31,6 +37,8 @@ function ImageCapture() {
     }
   };
 
+  useEffect(() => {}, [sources]);
+
   return source ? (
     <ImagePreview
       source={source}
@@ -39,13 +47,13 @@ function ImageCapture() {
   ) : (
     <Container>
       <Header>
-        <h2>cabeçalho da imagem</h2>
+        <h2>{header}</h2>
       </Header>
 
       <Content>
         <ImageContainer>
           <img
-            src={frenteMedidor}
+            src={imageSrc}
             style={{
               height: 'inherit',
               maxWidth: 'inherit',
@@ -53,7 +61,7 @@ function ImageCapture() {
             alt="Imagem do medidor"
           />
 
-          <h2>Tire uma foto da frente da caixa de medição</h2>
+          <h2>{description}</h2>
 
           <CaptureContainer>
             <InputImageFile

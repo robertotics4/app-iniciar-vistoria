@@ -1,3 +1,5 @@
+import { useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useImages } from '../../hooks/images';
 import {
   Container,
@@ -12,7 +14,22 @@ interface ImagePreviewProps {
 }
 
 function ImagePreview({ source, setSource }: ImagePreviewProps) {
-  const { pushImage } = useImages();
+  const { pushImage, sources } = useImages();
+  const navigate = useNavigate();
+
+  console.log(sources);
+
+  const handleConfirmButton = useCallback(() => {
+    pushImage(source);
+
+    setSource('');
+
+    if (sources.length === 1) {
+      navigate('/secondCapture');
+    } else if (sources.length === 2) {
+      navigate('/thirdCapture');
+    }
+  }, [pushImage, source, navigate, sources.length, setSource]);
 
   return (
     <Container>
@@ -23,7 +40,7 @@ function ImagePreview({ source, setSource }: ImagePreviewProps) {
           Não
         </RepeatButton>
 
-        <ConfirmButton onClick={() => pushImage(source)} type="button">
+        <ConfirmButton onClick={handleConfirmButton} type="button">
           Sim
         </ConfirmButton>
       </ActionButtons>

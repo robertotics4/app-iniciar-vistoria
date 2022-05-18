@@ -37,9 +37,7 @@ function Main() {
             </button>
           </>
         ) : (
-          <p>
-            Não existe uma conta contrato válida. Solicite o reenvio do link
-          </p>
+          <p>Link inválido, solicite o reenvio</p>
         )}
       </Content>
     </Container>
