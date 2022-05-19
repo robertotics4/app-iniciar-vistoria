@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { AiFillCamera } from 'react-icons/ai';
+import { useNavigate } from 'react-router-dom';
+
 import {
   Container,
   Content,
@@ -22,6 +24,9 @@ interface ImageCaptureProps {
 function ImageCapture({ header, description, imageSrc }: ImageCaptureProps) {
   const [source, setSource] = useState('');
   const { sources } = useImages();
+  const navigate = useNavigate();
+
+  console.log(sources);
 
   const handleSetSource = useCallback((value: string) => {
     setSource(value);
@@ -37,7 +42,15 @@ function ImageCapture({ header, description, imageSrc }: ImageCaptureProps) {
     }
   };
 
-  useEffect(() => {}, [sources]);
+  useEffect(() => {
+    if (sources.length === 1) {
+      navigate('/secondCapture');
+    } else if (sources.length === 2) {
+      navigate('/thirdCapture');
+    } else if (sources.length === 3) {
+      navigate('/end');
+    }
+  }, [sources, setSource, navigate]);
 
   return source ? (
     <ImagePreview

@@ -1,5 +1,4 @@
 import { useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useImages } from '../../hooks/images';
 import {
   Container,
@@ -14,22 +13,13 @@ interface ImagePreviewProps {
 }
 
 function ImagePreview({ source, setSource }: ImagePreviewProps) {
-  const { pushImage, sources } = useImages();
-  const navigate = useNavigate();
-
-  console.log(sources);
+  const { pushImage } = useImages();
 
   const handleConfirmButton = useCallback(() => {
     pushImage(source);
 
     setSource('');
-
-    if (sources.length === 1) {
-      navigate('/secondCapture');
-    } else if (sources.length === 2) {
-      navigate('/thirdCapture');
-    }
-  }, [pushImage, source, navigate, sources.length, setSource]);
+  }, [pushImage, source, setSource]);
 
   return (
     <Container>
