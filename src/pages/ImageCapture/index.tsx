@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 import { AiFillCamera } from 'react-icons/ai';
 import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
+import { useLoading } from 'react-use-loading';
 
 import {
   Container,
@@ -14,6 +16,8 @@ import {
 
 import { ImagePreview } from '../ImagePreview';
 import { useImages } from '../../hooks/images';
+import backofficeApi from '../../services/backofficeApi';
+import LoadingModal from '../../components/LoadingModal';
 
 interface ImageCaptureProps {
   header: string;
@@ -25,8 +29,42 @@ function ImageCapture({ header, description, imageSrc }: ImageCaptureProps) {
   const [source, setSource] = useState('');
   const { sources } = useImages();
   const navigate = useNavigate();
+  const [{ isLoading, message }, { start: startLoading, stop: stopLoading }] =
+    useLoading();
 
-  console.log(sources);
+  const sendImagesToBackoffice = useCallback(
+    async (images: string[]) => {
+      if (!images.length) {
+        throw new Error('Falha ao receber as imagens para o envio');
+      }
+
+      const authenticationResponse = await backofficeApi.post(
+        '/jwt-auth/v1/token',
+        {},
+        {
+          params: {
+            username: process.env.REACT_APP_BACKOFFICE_USERNAME,
+            password: process.env.REACT_APP_BACKOFFICE_PASSWORD,
+          },
+        },
+      );
+
+      const { token } = authenticationResponse.data;
+
+      sources.forEach(async (image: string, index: number) => {
+        const uploadResponse = await backofficeApi.post('/wp/v2/media', image, {
+          headers: {
+            'Content-Disposition': `form-data; filename="teste.jpg"`,
+            'Content-Type': 'image/jpeg',
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        console.log(uploadResponse);
+      });
+    },
+    [sources],
+  );
 
   const handleSetSource = useCallback((value: string) => {
     setSource(value);
@@ -47,10 +85,32 @@ function ImageCapture({ header, description, imageSrc }: ImageCaptureProps) {
       navigate('/secondCapture');
     } else if (sources.length === 2) {
       navigate('/thirdCapture');
-    } else if (sources.length === 3) {
-      navigate('/end');
+    } else if (sources.length > 2) {
+      startLoading('Enviando imagens ...');
+
+      sendImagesToBackoffice(sources)
+        .then(() => {
+          navigate('/end');
+        })
+        .catch(err => {
+          Swal.fire(
+            'Falha no upload',
+            err.message || 'Falha ao enviar as imagens para análise',
+            'error',
+          );
+        })
+        .finally(() => {
+          stopLoading();
+        });
     }
-  }, [sources, setSource, navigate]);
+  }, [
+    sources,
+    setSource,
+    navigate,
+    sendImagesToBackoffice,
+    startLoading,
+    stopLoading,
+  ]);
 
   return source ? (
     <ImagePreview
@@ -92,6 +152,14 @@ function ImageCapture({ header, description, imageSrc }: ImageCaptureProps) {
           </CaptureContainer>
         </ImageContainer>
       </Content>
+
+      {isLoading && (
+        <LoadingModal
+          isOpen={isLoading}
+          message={message}
+          setIsOpen={stopLoading}
+        />
+      )}
     </Container>
   );
 }
