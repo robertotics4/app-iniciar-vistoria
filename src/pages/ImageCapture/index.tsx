@@ -3,7 +3,6 @@ import { AiFillCamera } from 'react-icons/ai';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { useLoading } from 'react-use-loading';
-import { imageToBlob } from 'browser-fs-access';
 
 import {
   Container,
@@ -19,6 +18,7 @@ import { ImagePreview } from '../ImagePreview';
 import { useImages } from '../../hooks/images';
 import backofficeApi from '../../services/backofficeApi';
 import LoadingModal from '../../components/LoadingModal';
+import { useCustomer } from '../../hooks/customer';
 
 interface ImageCaptureProps {
   header: string;
@@ -28,7 +28,8 @@ interface ImageCaptureProps {
 
 function ImageCapture({ header, description, imageSrc }: ImageCaptureProps) {
   const [source, setSource] = useState('');
-  const { sources } = useImages();
+  const { sources, clearSources } = useImages();
+  const { contractAccount } = useCustomer();
   const navigate = useNavigate();
   const [{ isLoading, message }, { start: startLoading, stop: stopLoading }] =
     useLoading();
@@ -61,18 +62,32 @@ function ImageCapture({ header, description, imageSrc }: ImageCaptureProps) {
 
         reader.readAsArrayBuffer(blob);
 
+        let filename: string;
+
+        if (index === 0) {
+          filename = `${contractAccount}-frente.jpg`;
+        } else if (index === 1) {
+          filename = `${contractAccount}-lateral.jpg`;
+        } else if (index === 2) {
+          filename = `${contractAccount}-completo.jpg`;
+        }
+
         reader.onload = async () => {
           await backofficeApi.post('/wp/v2/media', reader.result, {
             headers: {
-              'Content-Disposition': `form-data; filename="teste.jpg"`,
+              'Content-Disposition': `form-data; filename=${
+                filename || 'teste.jpg'
+              }`,
               'Content-Type': 'image/jpeg',
               Authorization: `Bearer ${token}`,
             },
           });
         };
       });
+
+      clearSources();
     },
-    [sources],
+    [sources, clearSources],
   );
 
   const handleSetSource = useCallback((value: string) => {
@@ -94,7 +109,7 @@ function ImageCapture({ header, description, imageSrc }: ImageCaptureProps) {
       navigate('/secondCapture');
     } else if (sources.length === 2) {
       navigate('/thirdCapture');
-    } else if (sources.length > 2) {
+    } else if (sources.length === 3) {
       startLoading('Enviando imagens ...');
 
       sendImagesToBackoffice(sources)

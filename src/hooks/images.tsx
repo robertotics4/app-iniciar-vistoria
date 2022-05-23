@@ -3,6 +3,7 @@ import React, { createContext, useCallback, useContext, useState } from 'react';
 interface ImagesContextData {
   sources: string[];
   pushImage: (newImage: string) => void;
+  clearSources: () => void;
 }
 
 interface ImagesProviderProps {
@@ -21,11 +22,16 @@ function ImagesProvider({ children }: ImagesProviderProps) {
     [sources, setSources],
   );
 
+  const clearSources = useCallback(() => {
+    setSources([]);
+  }, []);
+
   return (
     <ImagesContext.Provider
       value={{
         sources,
         pushImage,
+        clearSources,
       }}
     >
       {children}
