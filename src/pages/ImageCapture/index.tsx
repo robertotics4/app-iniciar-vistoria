@@ -3,6 +3,7 @@ import { AiFillCamera } from 'react-icons/ai';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { useLoading } from 'react-use-loading';
+import { imageToBlob } from 'browser-fs-access';
 
 import {
   Container,
@@ -52,15 +53,23 @@ function ImageCapture({ header, description, imageSrc }: ImageCaptureProps) {
       const { token } = authenticationResponse.data;
 
       sources.forEach(async (image: string, index: number) => {
-        const uploadResponse = await backofficeApi.post('/wp/v2/media', image, {
-          headers: {
-            'Content-Disposition': `form-data; filename="teste.jpg"`,
-            'Content-Type': 'image/jpeg',
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await fetch(image);
 
-        console.log(uploadResponse);
+        const blob = await response.blob();
+
+        const reader = new FileReader();
+
+        reader.readAsArrayBuffer(blob);
+
+        reader.onload = async () => {
+          await backofficeApi.post('/wp/v2/media', reader.result, {
+            headers: {
+              'Content-Disposition': `form-data; filename="teste.jpg"`,
+              'Content-Type': 'image/jpeg',
+              Authorization: `Bearer ${token}`,
+            },
+          });
+        };
       });
     },
     [sources],
@@ -138,7 +147,9 @@ function ImageCapture({ header, description, imageSrc }: ImageCaptureProps) {
 
           <CaptureContainer>
             <InputImageFile
-              accept="image/*"
+              // accept="image/*"
+              name="file"
+              accept="image/jpeg"
               id="icon-button-file"
               type="file"
               capture="environment"
