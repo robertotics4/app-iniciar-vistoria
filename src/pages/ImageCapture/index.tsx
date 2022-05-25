@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { AiFillCamera } from 'react-icons/ai';
+import { AiFillCamera, AiFillPauseCircle } from 'react-icons/ai';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { useLoading } from 'react-use-loading';
@@ -16,9 +16,8 @@ import {
 
 import { ImagePreview } from '../ImagePreview';
 import { useImages } from '../../hooks/images';
-import backofficeApi from '../../services/backofficeApi';
 import LoadingModal from '../../components/LoadingModal';
-import { useCustomer } from '../../hooks/customer';
+import { useBackoffice } from '../../hooks/backoffice';
 
 interface ImageCaptureProps {
   header: string;
@@ -29,66 +28,15 @@ interface ImageCaptureProps {
 function ImageCapture({ header, description, imageSrc }: ImageCaptureProps) {
   const [source, setSource] = useState('');
   const { sources, clearSources } = useImages();
-  const { contractAccount } = useCustomer();
+  const {
+    authenticate,
+    sendImagesToBackoffice,
+    createSolicitation,
+    uploadedImages,
+  } = useBackoffice();
   const navigate = useNavigate();
   const [{ isLoading, message }, { start: startLoading, stop: stopLoading }] =
     useLoading();
-
-  const sendImagesToBackoffice = useCallback(
-    async (images: string[]) => {
-      if (!images.length) {
-        throw new Error('Falha ao receber as imagens para o envio');
-      }
-
-      const authenticationResponse = await backofficeApi.post(
-        '/jwt-auth/v1/token',
-        {},
-        {
-          params: {
-            username: process.env.REACT_APP_BACKOFFICE_USERNAME,
-            password: process.env.REACT_APP_BACKOFFICE_PASSWORD,
-          },
-        },
-      );
-
-      const { token } = authenticationResponse.data;
-
-      sources.forEach(async (image: string, index: number) => {
-        const response = await fetch(image);
-
-        const blob = await response.blob();
-
-        const reader = new FileReader();
-
-        reader.readAsArrayBuffer(blob);
-
-        let filename: string;
-
-        if (index === 0) {
-          filename = `${contractAccount}-frente.jpg`;
-        } else if (index === 1) {
-          filename = `${contractAccount}-lateral.jpg`;
-        } else if (index === 2) {
-          filename = `${contractAccount}-completo.jpg`;
-        }
-
-        reader.onload = async () => {
-          await backofficeApi.post('/wp/v2/media', reader.result, {
-            headers: {
-              'Content-Disposition': `form-data; filename=${
-                filename || 'teste.jpg'
-              }`,
-              'Content-Type': 'image/jpeg',
-              Authorization: `Bearer ${token}`,
-            },
-          });
-        };
-      });
-
-      clearSources();
-    },
-    [sources, clearSources],
-  );
 
   const handleSetSource = useCallback((value: string) => {
     setSource(value);
@@ -104,37 +52,43 @@ function ImageCapture({ header, description, imageSrc }: ImageCaptureProps) {
     }
   };
 
+  const startProcess = useCallback(async () => {
+    try {
+      startLoading('Enviando imagens...');
+
+      await authenticate();
+
+      await sendImagesToBackoffice(sources);
+
+      // await createSolicitation(uploadedImages);
+
+      clearSources();
+
+      navigate('/');
+    } catch (err: unknown) {
+      Swal.fire('Erro', 'erro', 'error');
+    } finally {
+      stopLoading();
+    }
+  }, [
+    authenticate,
+    sendImagesToBackoffice,
+    sources,
+    clearSources,
+    navigate,
+    startLoading,
+    stopLoading,
+  ]);
+
   useEffect(() => {
     if (sources.length === 1) {
       navigate('/secondCapture');
     } else if (sources.length === 2) {
       navigate('/thirdCapture');
     } else if (sources.length === 3) {
-      startLoading('Enviando imagens ...');
-
-      sendImagesToBackoffice(sources)
-        .then(() => {
-          navigate('/end');
-        })
-        .catch(err => {
-          Swal.fire(
-            'Falha no upload',
-            err.message || 'Falha ao enviar as imagens para análise',
-            'error',
-          );
-        })
-        .finally(() => {
-          stopLoading();
-        });
+      startProcess();
     }
-  }, [
-    sources,
-    setSource,
-    navigate,
-    sendImagesToBackoffice,
-    startLoading,
-    stopLoading,
-  ]);
+  }, [navigate, sources.length, startProcess]);
 
   return source ? (
     <ImagePreview
@@ -162,9 +116,8 @@ function ImageCapture({ header, description, imageSrc }: ImageCaptureProps) {
 
           <CaptureContainer>
             <InputImageFile
-              // accept="image/*"
+              accept="image/*"
               name="file"
-              accept="image/jpeg"
               id="icon-button-file"
               type="file"
               capture="environment"

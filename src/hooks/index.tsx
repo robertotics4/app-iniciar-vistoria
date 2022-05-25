@@ -1,3 +1,4 @@
+import { BackofficeProvider } from './backoffice';
 import { CustomerProvider } from './customer';
 import { ImagesProvider } from './images';
 
@@ -8,7 +9,9 @@ interface Props {
 function AppProvider({ children }: Props) {
   return (
     <CustomerProvider>
-      <ImagesProvider>{children}</ImagesProvider>
+      <ImagesProvider>
+        <BackofficeProvider>{children}</BackofficeProvider>
+      </ImagesProvider>
     </CustomerProvider>
   );
 }
