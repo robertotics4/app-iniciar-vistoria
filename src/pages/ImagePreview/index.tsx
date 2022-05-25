@@ -15,11 +15,11 @@ interface ImagePreviewProps {
 function ImagePreview({ source, setSource }: ImagePreviewProps) {
   const { pushImage } = useImages();
 
-  const handleConfirmButton = useCallback(() => {
+  const handleConfirmButton = useCallback(async () => {
     pushImage(source);
 
     setSource('');
-  }, [pushImage, source, setSource]);
+  }, [pushImage, setSource, source]);
 
   return (
     <Container>

@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
-import { AiFillCamera, AiFillPauseCircle } from 'react-icons/ai';
+import { AiFillCamera } from 'react-icons/ai';
 import { useNavigate } from 'react-router-dom';
-import Swal from 'sweetalert2';
-import { useLoading } from 'react-use-loading';
 
+import { useLoading } from 'react-use-loading';
+import Swal from 'sweetalert2';
 import {
   Container,
   Content,
@@ -27,14 +27,11 @@ interface ImageCaptureProps {
 
 function ImageCapture({ header, description, imageSrc }: ImageCaptureProps) {
   const [source, setSource] = useState('');
-  const { sources, clearSources } = useImages();
-  const {
-    authenticate,
-    sendImagesToBackoffice,
-    createSolicitation,
-    uploadedImages,
-  } = useBackoffice();
+  const { sources } = useImages();
+  const { authenticate, sendImagesToBackoffice, createSolicitation } =
+    useBackoffice();
   const navigate = useNavigate();
+
   const [{ isLoading, message }, { start: startLoading, stop: stopLoading }] =
     useLoading();
 
@@ -54,46 +51,38 @@ function ImageCapture({ header, description, imageSrc }: ImageCaptureProps) {
 
   const startProcess = useCallback(async () => {
     try {
-      startLoading('Enviando imagens...');
-
       await authenticate();
 
-      await sendImagesToBackoffice(sources);
+      const urls = await sendImagesToBackoffice(sources);
 
-      // await createSolicitation(uploadedImages);
-
-      clearSources();
-
-      navigate('/');
+      await createSolicitation(urls);
     } catch (err: unknown) {
       Swal.fire('Erro', 'erro', 'error');
-    } finally {
+    }
+  }, [authenticate, sendImagesToBackoffice, sources, createSolicitation]);
+
+  useEffect(() => {
+    console.log(sources.length);
+    if (sources.length === 3) {
+      startLoading('Carregando imagens...');
+      startProcess();
       stopLoading();
     }
-  }, [
-    authenticate,
-    sendImagesToBackoffice,
-    sources,
-    clearSources,
-    navigate,
-    startLoading,
-    stopLoading,
-  ]);
+  }, [sources, startLoading, startProcess, stopLoading]);
 
   useEffect(() => {
     if (sources.length === 1) {
       navigate('/secondCapture');
     } else if (sources.length === 2) {
       navigate('/thirdCapture');
-    } else if (sources.length === 3) {
-      startProcess();
     }
-  }, [navigate, sources.length, startProcess]);
+  }, [navigate, sources.length]);
 
-  return source ? (
-    <ImagePreview
-      source={source}
-      setSource={(value: string) => handleSetSource(value)}
+  const loadOrContent = isLoading ? (
+    <LoadingModal
+      isOpen={isLoading}
+      message={message}
+      setIsOpen={stopLoading}
     />
   ) : (
     <Container>
@@ -131,15 +120,16 @@ function ImageCapture({ header, description, imageSrc }: ImageCaptureProps) {
           </CaptureContainer>
         </ImageContainer>
       </Content>
-
-      {isLoading && (
-        <LoadingModal
-          isOpen={isLoading}
-          message={message}
-          setIsOpen={stopLoading}
-        />
-      )}
     </Container>
+  );
+
+  return source ? (
+    <ImagePreview
+      source={source}
+      setSource={(value: string) => handleSetSource(value)}
+    />
+  ) : (
+    loadOrContent
   );
 }
 

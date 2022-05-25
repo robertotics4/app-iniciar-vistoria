@@ -5,7 +5,7 @@ import { useCustomer } from './customer';
 
 interface BackofficeContextData {
   authenticate: () => Promise<string>;
-  sendImagesToBackoffice: (images: string[]) => Promise<void>;
+  sendImagesToBackoffice: (images: string[]) => Promise<string[]>;
   createSolicitation: (imageUrls: string[]) => Promise<void>;
   uploadedImages: string[];
 }
@@ -63,6 +63,8 @@ function BackofficeProvider({ children }: BackofficeProviderProps) {
         return undefined;
       });
 
+      const urls: string[] = [];
+
       const promises = images.map(async (image, index) => {
         const arrayBuffer = await sourceToArrayBuffer(image);
 
@@ -77,48 +79,47 @@ function BackofficeProvider({ children }: BackofficeProviderProps) {
           },
         );
 
-        if (uploadResponse.data.source_url) {
-          setUploadedImages([
-            ...uploadedImages,
-            uploadResponse.data.source_url,
-          ]);
-        }
+        urls.push(uploadResponse.data.source_url);
       });
 
-      Promise.all(promises);
+      if (urls.length) {
+        setUploadedImages(urls);
+      }
+
+      await Promise.all(promises);
+
+      return urls;
     },
-    [contractAccount, uploadedImages],
+    [contractAccount],
   );
 
   const createSolicitation = useCallback(
     async (imageUrls: string[]) => {
-      if (uploadedImages.length === 3) {
-        const contentObject = {
-          nome_servico_formulario: 'Solicitar Vistoria Online',
-          conta_contrato: contractAccount,
-          'image-medidor_frente': imageUrls[0],
-          'image-medidor_lateral': imageUrls[1],
-          'image-medidor_completo': imageUrls[2],
-        };
+      const contentObject = {
+        nome_servico_formulario: 'Solicitar Vistoria Online',
+        conta_contrato: contractAccount,
+        'image-medidor_frente': imageUrls[0],
+        'image-medidor_lateral': imageUrls[1],
+        'image-medidor_completo': imageUrls[2],
+      };
 
-        const solicitationResponse = await backofficeApi.post(
-          '/wp/v2/solicitacoes/',
-          {
-            title: 'Solicitar Vistoria Online',
-            status: 'pending',
-            content: JSON.stringify(contentObject),
+      const solicitationResponse = await backofficeApi.post(
+        '/wp/v2/solicitacoes/',
+        {
+          title: 'Solicitar Vistoria Online',
+          status: 'pending',
+          content: JSON.stringify(contentObject),
+        },
+        {
+          headers: {
+            'Content-Type': 'image/jpeg',
           },
-          {
-            headers: {
-              'Content-Type': 'image/jpeg',
-            },
-          },
-        );
+        },
+      );
 
-        console.log(contentObject);
-        console.log(JSON.stringify(contentObject));
-        console.log(solicitationResponse);
-      }
+      // console.log(contentObject);
+      // console.log(JSON.stringify(contentObject));
+      // console.log(solicitationResponse);
     },
     [contractAccount, uploadedImages.length],
   );

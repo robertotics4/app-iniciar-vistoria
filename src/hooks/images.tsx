@@ -1,4 +1,10 @@
-import React, { createContext, useCallback, useContext, useState } from 'react';
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
 
 interface ImagesContextData {
   sources: string[];
@@ -25,6 +31,8 @@ function ImagesProvider({ children }: ImagesProviderProps) {
   const clearSources = useCallback(() => {
     setSources([]);
   }, []);
+
+  useEffect(() => {}, [pushImage]);
 
   return (
     <ImagesContext.Provider
