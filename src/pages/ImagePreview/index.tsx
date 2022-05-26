@@ -5,6 +5,7 @@ import {
   ActionButtons,
   RepeatButton,
   ConfirmButton,
+  Content,
 } from './styles';
 
 interface ImagePreviewProps {
@@ -25,15 +26,18 @@ function ImagePreview({ source, setSource }: ImagePreviewProps) {
     <Container>
       <img src={source} alt="Preview" />
 
-      <ActionButtons>
-        <RepeatButton type="button" onClick={() => setSource('')}>
-          Não
-        </RepeatButton>
+      <Content>
+        <h2>A foto ficou boa?</h2>
+        <ActionButtons>
+          <RepeatButton type="button" onClick={() => setSource('')}>
+            Não
+          </RepeatButton>
 
-        <ConfirmButton onClick={handleConfirmButton} type="button">
-          Sim
-        </ConfirmButton>
-      </ActionButtons>
+          <ConfirmButton onClick={handleConfirmButton} type="button">
+            Sim
+          </ConfirmButton>
+        </ActionButtons>
+      </Content>
     </Container>
   );
 }

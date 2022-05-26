@@ -21,11 +21,12 @@ export const Container = styled.div`
   }
 `;
 
-export const ActionButtons = styled.div`
+export const Content = styled.div`
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
+
   position: absolute;
 
   width: 100%;
@@ -33,6 +34,19 @@ export const ActionButtons = styled.div`
   padding: 16px;
 
   background-color: rgba(0, 0, 0, 0.7);
+
+  h2 {
+    color: white;
+  }
+`;
+
+export const ActionButtons = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+
+  margin-top: 16px;
 `;
 
 export const RepeatButton = styled.button`
