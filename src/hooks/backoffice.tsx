@@ -8,6 +8,8 @@ interface BackofficeContextData {
   sendImagesToBackoffice: (images: string[]) => Promise<string[]>;
   createSolicitation: (imageUrls: string[]) => Promise<void>;
   uploadedImages: string[];
+  solicitationError: boolean;
+  setSolicitationError: (value: boolean) => void;
 }
 
 interface BackofficeProviderProps {
@@ -20,6 +22,7 @@ const BackofficeContext = createContext<BackofficeContextData>(
 
 function BackofficeProvider({ children }: BackofficeProviderProps) {
   const [uploadedImages, setUploadedImages] = useState<string[]>([]);
+  const [solicitationError, setSolicitationError] = useState<boolean>(false);
   const { contractAccount } = useCustomer();
 
   const authenticate = useCallback(async () => {
@@ -132,6 +135,8 @@ function BackofficeProvider({ children }: BackofficeProviderProps) {
         sendImagesToBackoffice,
         createSolicitation,
         uploadedImages,
+        solicitationError,
+        setSolicitationError,
       }}
     >
       {children}

@@ -3,7 +3,6 @@ import { AiFillCamera } from 'react-icons/ai';
 import { useNavigate } from 'react-router-dom';
 
 import { useLoading } from 'react-use-loading';
-import Swal from 'sweetalert2';
 import {
   Container,
   Content,
@@ -28,8 +27,12 @@ interface ImageCaptureProps {
 function ImageCapture({ header, description, imageSrc }: ImageCaptureProps) {
   const [source, setSource] = useState('');
   const { sources, clearSources } = useImages();
-  const { authenticate, sendImagesToBackoffice, createSolicitation } =
-    useBackoffice();
+  const {
+    authenticate,
+    sendImagesToBackoffice,
+    createSolicitation,
+    setSolicitationError,
+  } = useBackoffice();
   const navigate = useNavigate();
 
   const [{ isLoading, message }, { start: startLoading, stop: stopLoading }] =
@@ -57,13 +60,17 @@ function ImageCapture({ header, description, imageSrc }: ImageCaptureProps) {
 
       await createSolicitation(urls);
     } catch (err: unknown) {
-      Swal.fire('Erro', 'erro', 'error');
+      setSolicitationError(true);
     }
-  }, [authenticate, sendImagesToBackoffice, sources, createSolicitation]);
+  }, [
+    authenticate,
+    sendImagesToBackoffice,
+    sources,
+    createSolicitation,
+    setSolicitationError,
+  ]);
 
   useEffect(() => {
-    console.log(sources.length);
-
     async function execute() {
       startLoading('Carregando imagens...');
       await startProcess();

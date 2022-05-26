@@ -1,6 +1,10 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
-export const Container = styled.div`
+interface ContainerProps {
+  type: 'success' | 'error';
+}
+
+export const Container = styled.div<ContainerProps>`
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -10,7 +14,14 @@ export const Container = styled.div`
   width: 100vw;
   padding: 24px;
 
-  background: var(--success);
+  ${props =>
+    props.type === 'success'
+      ? css`
+          background: var(--success);
+        `
+      : css`
+          background: var(--errors);
+        `}
 
   h1 {
     margin-top: 32px;
