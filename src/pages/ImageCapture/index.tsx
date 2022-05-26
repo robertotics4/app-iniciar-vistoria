@@ -94,11 +94,10 @@ function ImageCapture({ header, description, imageSrc }: ImageCaptureProps) {
     }
   }, [navigate, sources.length]);
 
-  const loadOrContent = isLoading ? (
-    <LoadingModal
-      isOpen={isLoading}
-      message={message}
-      setIsOpen={stopLoading}
+  return source ? (
+    <ImagePreview
+      source={source}
+      setSource={(value: string) => handleSetSource(value)}
     />
   ) : (
     <Container>
@@ -136,16 +135,13 @@ function ImageCapture({ header, description, imageSrc }: ImageCaptureProps) {
           </CaptureContainer>
         </ImageContainer>
       </Content>
-    </Container>
-  );
 
-  return source ? (
-    <ImagePreview
-      source={source}
-      setSource={(value: string) => handleSetSource(value)}
-    />
-  ) : (
-    loadOrContent
+      <LoadingModal
+        isOpen={isLoading}
+        message={message}
+        setIsOpen={stopLoading}
+      />
+    </Container>
   );
 }
 
