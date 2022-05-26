@@ -98,34 +98,30 @@ function BackofficeProvider({ children }: BackofficeProviderProps) {
 
   const createSolicitation = useCallback(
     async (imageUrls: string[]) => {
-      const contentObject = {
+      const contentJSON = {
         nome_servico_formulario: 'Solicitar Vistoria Online',
-        conta_contrato: contractAccount,
+        'ls-conta_ativa': contractAccount,
+        _canal_envio: 'APP Vistoria Online',
         'image-medidor_frente': imageUrls[0],
         'image-medidor_lateral': imageUrls[1],
         'image-medidor_completo': imageUrls[2],
       };
 
-      console.log(contentObject);
-      console.log(JSON.stringify(contentObject));
-
-      const solicitationResponse = await backofficeApi.post(
+      await backofficeApi.post(
         '/wp/v2/solicitacoes/',
         {
           title: 'Solicitar Vistoria Online',
           status: 'pending',
-          content: JSON.stringify(contentObject),
+          content: JSON.stringify(contentJSON),
         },
         {
           headers: {
-            'Content-Type': 'image/jpeg',
+            'Content-Type': 'application/json',
           },
         },
       );
-
-      console.log(solicitationResponse);
     },
-    [contractAccount, uploadedImages.length],
+    [contractAccount],
   );
 
   return (
