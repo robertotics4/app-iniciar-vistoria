@@ -103,6 +103,9 @@ function BackofficeProvider({ children }: BackofficeProviderProps) {
         'image-medidor_completo': imageUrls[2],
       };
 
+      console.log(contentObject);
+      console.log(JSON.stringify(contentObject));
+
       const solicitationResponse = await backofficeApi.post(
         '/wp/v2/solicitacoes/',
         {
@@ -117,9 +120,7 @@ function BackofficeProvider({ children }: BackofficeProviderProps) {
         },
       );
 
-      // console.log(contentObject);
-      // console.log(JSON.stringify(contentObject));
-      // console.log(solicitationResponse);
+      console.log(solicitationResponse);
     },
     [contractAccount, uploadedImages.length],
   );

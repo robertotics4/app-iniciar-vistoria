@@ -27,7 +27,7 @@ interface ImageCaptureProps {
 
 function ImageCapture({ header, description, imageSrc }: ImageCaptureProps) {
   const [source, setSource] = useState('');
-  const { sources } = useImages();
+  const { sources, clearSources } = useImages();
   const { authenticate, sendImagesToBackoffice, createSolicitation } =
     useBackoffice();
   const navigate = useNavigate();
@@ -63,12 +63,28 @@ function ImageCapture({ header, description, imageSrc }: ImageCaptureProps) {
 
   useEffect(() => {
     console.log(sources.length);
-    if (sources.length === 3) {
+
+    async function execute() {
       startLoading('Carregando imagens...');
-      startProcess();
+      await startProcess();
       stopLoading();
+
+      clearSources();
+
+      navigate('/end');
     }
-  }, [sources, startLoading, startProcess, stopLoading]);
+
+    if (sources.length === 3) {
+      execute();
+    }
+  }, [
+    sources,
+    startLoading,
+    startProcess,
+    stopLoading,
+    navigate,
+    clearSources,
+  ]);
 
   useEffect(() => {
     if (sources.length === 1) {
