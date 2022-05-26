@@ -20,7 +20,7 @@ function Routes() {
         path="/firstCapture"
         element={
           <ImageCapture
-            header="Caixa de medição - Frente"
+            header="Imagem 01 - Frente"
             imageSrc={imgFrenteMedidor}
             description="Tire uma foto da frente da caixa de medição"
           />
@@ -30,7 +30,7 @@ function Routes() {
         path="/secondCapture"
         element={
           <ImageCapture
-            header="Caixa de medição - Lateral"
+            header="Imagem 02 - Lateral"
             imageSrc={imgLateralmedidor}
             description="Tire uma foto da lateral da caixa de medição"
           />
@@ -40,7 +40,7 @@ function Routes() {
         path="/thirdCapture"
         element={
           <ImageCapture
-            header="Padrão completo"
+            header="Imagem 03 - Completo"
             imageSrc={imgLateralmedidor}
             description="Dê dois passos para trás e tire uma foto do padrão completo"
           />

@@ -26,7 +26,7 @@ function Main() {
         {contractAccount ? (
           <>
             <p>
-              Para prosegguir com o processo de ligação, envie as fotos
+              Para prosegguir com o processo de ligação, envie as 3 fotos
               solicitadas.
             </p>
 
