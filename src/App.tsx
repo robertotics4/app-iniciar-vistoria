@@ -7,7 +7,7 @@ import Routes from './routes';
 
 function App() {
   return (
-    <BrowserRouter basename="/iniciar-vistoria">
+    <BrowserRouter basename={process.env.PUBLIC_URL}>
       <AppProvider>
         <Routes />
         <GlobalStyle />
