@@ -13,11 +13,11 @@ function Routes() {
 
   return (
     <Switch>
-      <Route path="/" element={<Main />}>
-        <Route path="/:hash" element={<Main />} />
+      <Route path={`${process.env.PUBLIC_URL}/`} element={<Main />}>
+        <Route path={`${process.env.PUBLIC_URL}/:hash`} element={<Main />} />
       </Route>
       <Route
-        path="/firstCapture"
+        path={`${process.env.PUBLIC_URL}/firstCapture`}
         element={
           <ImageCapture
             header="Imagem 01 - Frente"
@@ -27,7 +27,7 @@ function Routes() {
         }
       />
       <Route
-        path="/secondCapture"
+        path={`${process.env.PUBLIC_URL}/secondCapture`}
         element={
           <ImageCapture
             header="Imagem 02 - Lateral"
@@ -37,7 +37,7 @@ function Routes() {
         }
       />
       <Route
-        path="/thirdCapture"
+        path={`${process.env.PUBLIC_URL}/thirdCapture`}
         element={
           <ImageCapture
             header="Imagem 03 - Completo"
@@ -47,7 +47,7 @@ function Routes() {
         }
       />
       <Route
-        path="/end"
+        path={`${process.env.PUBLIC_URL}/end`}
         element={
           <Alert
             type={solicitationError ? 'error' : 'success'}

@@ -2,7 +2,7 @@
   "name": "template",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://td-hml.equatorialenergia.com.br/apps/iniciar-vistoria/",
+  "homepage": "https://td-hml.equatorialenergia.com.br/apps/iniciar-vistoria",
   "dependencies": {
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^13.0.0",
