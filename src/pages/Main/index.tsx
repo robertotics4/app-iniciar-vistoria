@@ -1,20 +1,27 @@
 import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect } from 'react';
-import { Container, Content } from './styles';
+import CryptoJS from 'crypto-js';
 
+import { Container, Content } from './styles';
 import logo from '../../assets/logo.svg';
 import { useCustomer } from '../../hooks/customer';
 
 function Main() {
   const navigate = useNavigate();
-  const { contractAccount: paramContract } = useParams();
+  const { hash } = useParams();
   const { contractAccount, setContractAccount } = useCustomer();
 
   useEffect(() => {
-    if (paramContract) {
-      setContractAccount(paramContract);
+    if (hash) {
+      const bytes = CryptoJS.AES.decrypt(
+        hash,
+        process.env.REACT_APP_ENCRYPTION_KEY as string,
+      );
+      const decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+
+      setContractAccount(decryptedData);
     }
-  }, [setContractAccount, paramContract]);
+  }, [setContractAccount, hash]);
 
   return (
     <Container>
@@ -26,7 +33,7 @@ function Main() {
         {contractAccount ? (
           <>
             <p>
-              Para prosegguir com o processo de ligação, envie as 3 fotos
+              Para prosseguir com o processo de ligação, envie as 3 fotos
               solicitadas.
             </p>
 

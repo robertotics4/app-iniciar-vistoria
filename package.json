@@ -2,6 +2,7 @@
   "name": "template",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://td-hml.equatorialenergia.com.br/apps/iniciar-vistoria/",
   "dependencies": {
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^13.0.0",
@@ -11,6 +12,7 @@
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
     "axios": "^0.27.2",
+    "crypto-js": "^4.1.1",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
     "react-icons": "^4.3.1",
@@ -43,6 +45,7 @@
     ]
   },
   "devDependencies": {
+    "@types/crypto-js": "^4.1.1",
     "@types/react-spinkit": "^3.0.7",
     "@types/styled-components": "^5.1.25",
     "@typescript-eslint/eslint-plugin": "^5.22.0",

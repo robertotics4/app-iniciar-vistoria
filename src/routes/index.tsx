@@ -14,7 +14,7 @@ function Routes() {
   return (
     <Switch>
       <Route path="/" element={<Main />}>
-        <Route path="/:contractAccount" element={<Main />} />
+        <Route path="/:hash" element={<Main />} />
       </Route>
       <Route
         path="/firstCapture"
