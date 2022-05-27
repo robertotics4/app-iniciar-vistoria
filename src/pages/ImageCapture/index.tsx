@@ -78,7 +78,7 @@ function ImageCapture({ header, description, imageSrc }: ImageCaptureProps) {
 
       clearSources();
 
-      navigate(`${process.env.PUBLIC_URL}/end`);
+      navigate('/end');
     }
 
     if (sources.length === 3) {
@@ -95,9 +95,9 @@ function ImageCapture({ header, description, imageSrc }: ImageCaptureProps) {
 
   useEffect(() => {
     if (sources.length === 1) {
-      navigate(`${process.env.PUBLIC_URL}/secondCapture`);
+      navigate('/secondCapture');
     } else if (sources.length === 2) {
-      navigate(`${process.env.PUBLIC_URL}/thirdCapture`);
+      navigate('/thirdCapture');
     }
   }, [navigate, sources.length]);
 
