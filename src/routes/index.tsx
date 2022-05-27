@@ -14,7 +14,7 @@ function Routes() {
   return (
     <Switch>
       <Route path={`${process.env.PUBLIC_URL}/`} element={<Main />}>
-        <Route path={`${process.env.PUBLIC_URL}/:hash`} element={<Main />} />
+        <Route path="/:hash" element={<Main />} />
       </Route>
       <Route
         path={`${process.env.PUBLIC_URL}/firstCapture`}
