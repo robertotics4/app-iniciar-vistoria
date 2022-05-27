@@ -16,6 +16,7 @@ function Routes() {
       <Route path="/" element={<Main />}>
         <Route path="/:hash" element={<Main />} />
       </Route>
+
       <Route
         path="/firstCapture"
         element={
@@ -26,6 +27,7 @@ function Routes() {
           />
         }
       />
+
       <Route
         path="/secondCapture"
         element={
@@ -36,6 +38,7 @@ function Routes() {
           />
         }
       />
+
       <Route
         path="/thirdCapture"
         element={
@@ -46,6 +49,7 @@ function Routes() {
           />
         }
       />
+
       <Route
         path="/end"
         element={
